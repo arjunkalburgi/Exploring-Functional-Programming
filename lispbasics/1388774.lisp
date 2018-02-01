@@ -129,7 +129,7 @@
         (append (cons nil nil) (eachsubset L)) )
 
 
-;QUESTION 6
+;QUESTION 6 - RANK
     (defun compilelist (data rank)
         (if (null (cdr data)) ; if it's the last item
             (append rank (list (car (car data))))
@@ -180,10 +180,15 @@
         of references, then it doesn't matter how they are ordered.
 
         Example
-
+            (rank '(a b) '((a a)(b b)(a b)(c a))) ==> (a b) OR (b a)
+            (rank '(a b c) '((a b)(a c)(a d))) ==> (b c a) OR (c b a)
+            (rank '(a b c d) '((d c)(a c)(b d)(c c)(a a)(d b))) ==> (c b d a) OR (c d b a)
+            (rank '(b a k) '((k b)(b k)(a k)(k a))) ==> (k a b) OR (k b a)
+            (rank '(m n) '((n m)(m m)(t n)(s t)(t s))) ==> (m n) OR (n m)
         "
         (compilelist (mySort (countobjects S L ()) ) ()))
 
+;QUESTION 6 - REACHED
     (defun alreadyseen (x seen)
         (if (null seen)
             NIL
@@ -211,6 +216,10 @@
         be part of the result). The order of the web pages in the resulting list is unimportant.
 
         Example
-            
+            (reached 'a '((b b))) ==> NIL
+            (reached 'a '((b a))) ==> NIL
+            (reached 'a '((a b)(a c)(a d))) ==> (b c d)
+            (reached 'a '((c d)(d a)(a b)(b c))) ==> (b c d)
+            (reached 'a '((e x)(b x)(x e)(a a)(a b))) ==> (b e x) 
         "
         (cdr (recursivesearch (list x) L (list x))))
