@@ -1,0 +1,76 @@
+1. Reduce the following λ-expression to its normal form. Show two sequences
+of reductions, one of which is based on normal order reduction and the other based on
+applicative order reduction. Show all the reduction steps.
+(λxy | xx(yy)) (λx | xy) (λx | x)
+
+NOR: 
+(((λxy | xx(yy)) (λx | xy)) (λx | x))
+(((λxy | xy xy)) (λx | xy)) (λx | x))
+((λx | xy)(λx | xy)) (λx | x)
+((λx | xy)y) (λx | x)
+(yy) (λx | x)
+
+AOR: 
+((λxy | xx(yy)) (λx | xy) (λx | x))
+(λx | xy)(λx | xy) (λx | x)(λx | x)
+(λx | xy)y (λx | x)(λx | x)
+yy (λx | x)(λx | x)
+yy (λx | x)
+
+
+
+
+
+2a. Give a lambda expression that defines IMP, IMP = (λxy | ......)
+
+T = (λxy | x) and F = (λxy | y)
+NOT x: (λx | xFT) & x OR y:  (λxy | xTy)
+(NOT x) OR y: (λxy | (λx | xFT)Ty)
+
+IMP = (λxy | (λx | xFT)Ty)
+
+
+2b. Evaluate True implies F as (IMP TF)
+
+IMP TF
+= (λxy | (λx | xFT)Ty) TF // y=F, x=T
+= ((TFT)TF)
+= (FTF)
+= F
+
+This is correct. True does not imply False. 
+
+
+
+
+
+3. Evaluate the lambda expression and outline contexts. 
+
+(((λxy | (λz | (if (> x y) (+ x z) (+ x y)))) 4 5) 10)
+    Context: {}
+
+    Inner closure:
+    (λxy | (λz | (if (> x y) (+ x z) (+ x y)))) 4 5
+        Context: {x=4, y=5}
+    (λz | (if (> 4 5) (+ 4 z) (+ 4 5)))
+    (λz | (+ 4 5))
+    (λz | 9)
+
+((λz | 9) 10)
+    Context: {x=4, y=5}
+
+    Full closure:
+    (λz | 9) 10 
+        Context: {z=10, x=4, y=5}
+    9
+
+Ans: 9
+
+Solving the expression with AOR as above, the last context state 
+during eval was {z=10, x=4, y=5}.
+
+I first created a context for the inner-most closure, featuring the
+context: {x=4, y=5}. With this I was able to simplify the expression
+quite a bit. This simplification got plugged back into the main 
+closure. The context {z=10} was unified with the existing to make
+{z=10, x=4, y=5}, and then the closure was solved. 
