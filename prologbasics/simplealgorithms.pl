@@ -36,28 +36,28 @@
         Rr>=R.
 
 %QUESTION 4 
-append([],X,X).                            
-append([X|Y],Z,[X|W]) :- append(Y,Z,W).
+    append([],X,X).                            
+    append([X|Y],Z,[X|W]) :- append(Y,Z,W).
 
-countVar([], V, [V, 0]). 
-countVar([V|L], V, [V, R]) :-
-    countVar(L, V, [V, R1]), 
-    R is R1 + 1. 
-countVar([A|L], V, [V, R]) :- 
-    countVar(L, V, [V, R]),
-    A \= V.
+    countVar([], V, [V, 0]). 
+    countVar([V|L], V, [V, R]) :-
+        countVar(L, V, [V, R1]), 
+        R is R1 + 1. 
+    countVar([A|L], V, [V, R]) :- 
+        countVar(L, V, [V, R]),
+        A \= V.
 
-countHelper(_, [], _, []). 
-countHelper(L, [H|T], S, Rf) :- 
-    (member(H, S)
-    ->  countHelper(L, T, S, Rf)
-    ;   append(S, [H], Sn),
-        countVar(L, H, CR),
-        countHelper(L, T, Sn, Ri),
-        append(Ri, [CR], Rf)
-    ).
+    countHelper(_, [], _, []). 
+    countHelper(L, [H|T], S, Rf) :- 
+        (member(H, S)
+        ->  countHelper(L, T, S, Rf)
+        ;   append(S, [H], Sn),
+            countVar(L, H, CR),
+            countHelper(L, T, Sn, Ri),
+            append(Ri, [CR], Rf)
+        ).
 
-countAll([], []). 
-countAll(L, Ro) :- countHelper(L, L, [], Ru).
+    countAll([], []). 
+    countAll(L, R) :- countHelper(L, L, [], R).
 %QUESTION 5
 %QUESTION 6 
