@@ -37,11 +37,12 @@
 
 %QUESTION 4 
 countVar([], V, [V, 0]). 
-countVar([_|L], V, [V, R]) :- 
-    countVar(L, V, [V, R]).
 countVar([V|L], V, [V, R]) :-
     countVar(L, V, [V, R1]), 
     R is R1 + 1. 
+countVar([A|L], V, [V, R]) :- 
+    countVar(L, V, [V, R]),
+    A \= V.
 
 %QUESTION 5
 %QUESTION 6 
