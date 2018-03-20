@@ -36,16 +36,11 @@
         Rr>=R.
 
 %QUESTION 4 
-    append([],X,X).                            
-    append([X|Y],Z,[X|W]) :- append(Y,Z,W).
-
-    countVar([], V, [V, 0]). 
-    countVar([V|L], V, [V, R]) :-
-        countVar(L, V, [V, R1]), 
-        R is R1 + 1. 
-    countVar([A|L], V, [V, R]) :- 
-        countVar(L, V, [V, R]),
-        A \= V.
+    countAll([], []). 
+    countAll(L, R) :- countHelper(L, L, [], R).
+    countAll(L, Ro) :- 
+        countHelper(L, L, [], Ru),
+        quick_sort2(Ru, Ro).
 
     countHelper(_, [], _, []). 
     countHelper(L, [H|T], S, Rf) :- 
@@ -56,6 +51,17 @@
             countHelper(L, T, Sn, Ri),
             append(Ri, [CR], Rf)
         ).
+    
+    countVar([], V, [V, 0]). 
+    countVar([V|L], V, [V, R]) :-
+        countVar(L, V, [V, R1]), 
+        R is R1 + 1. 
+    countVar([A|L], V, [V, R]) :- 
+        countVar(L, V, [V, R]),
+        A \= V.
+
+    append([],X,X).                            
+    append([X|Y],Z,[X|W]) :- append(Y,Z,W).
 
     % https://stackoverflow.com/a/8429550 & http://kti.mff.cuni.cz/~bartak/prolog/sorting.html
     pivoting(_,[],[],[]).
@@ -67,16 +73,19 @@
         pivoting(H,T,L1,L2),
         q_sort(L1,Acc,Sorted1),q_sort(L2,[H|Sorted1],Sorted).
 
-    countAll([], []). 
-    countAll(L, R) :- countHelper(L, L, [], R).
-    countAll(L, Ro) :- 
-        countHelper(L, L, [], Ru),
-        quick_sort2(Ru, Ro).
 
 %QUESTION 5
+    sub([], _, []).
+    sub(L, Ds, R) :-
+        subHelper(L, Ds, Ds, R). 
+        
+    subHelper(L, [], L).
+    subHelper(L, Ds, [D|R], Lf) :- 
+        swapAll(Ds, D, L, Li), 
+        subHelper(Li, R, Lf).
 
-swapAll(_, _, [], []). 
-swapAll(Ds, [Var, Val|E], [H|T], Lu) :- 
+    swapAll(_, _, [], []). 
+    swapAll(Ds, [Var, Val|E], [H|T], Lu) :- 
     (is_list(H) %% if head is list 
     ->  %% then callsubhelper on it
         subHelper(H, Ds, Ds, Rh),
@@ -95,13 +104,7 @@ swapAll(Ds, [Var, Val|E], [H|T], Lu) :-
         )
     ).
 
-subHelper(L, [], L).
-subHelper(L, Ds, [D|R], Lf) :- 
-    swapAll(Ds, D, L, Li), 
-    subHelper(Li, R, Lf).
 
-sub([], _, []).
-sub(L, Ds, R) :- subHelper(L, Ds, Ds, R). 
 
 
 %QUESTION 6 
