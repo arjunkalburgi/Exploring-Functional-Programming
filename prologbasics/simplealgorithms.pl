@@ -57,7 +57,51 @@
             append(Ri, [CR], Rf)
         ).
 
+    % https://stackoverflow.com/a/8429550 & http://kti.mff.cuni.cz/~bartak/prolog/sorting.html
+    pivoting(_,[],[],[]).
+    pivoting(H,[X|T],[X|L],G):-X=<H,pivoting(H,T,L,G).
+    pivoting(H,[X|T],L,[X|G]):-X>H,pivoting(H,T,L,G).
+    quick_sort2(List,Sorted) :- q_sort(List,[],Sorted).
+    q_sort([],Acc,Acc).
+    q_sort([H|T],Acc,Sorted) :-
+        pivoting(H,T,L1,L2),
+        q_sort(L1,Acc,Sorted1),q_sort(L2,[H|Sorted1],Sorted).
+
     countAll([], []). 
     countAll(L, R) :- countHelper(L, L, [], R).
+    countAll(L, Ro) :- 
+        countHelper(L, L, [], Ru),
+        quick_sort2(Ru, Ro).
+
 %QUESTION 5
+
+swapAll(_, _, [], []). 
+swapAll(Ds, [Var, Val|E], [H|T], Lu) :- 
+    (is_list(H) %% if head is list 
+    ->  %% then callsubhelper on it
+        subHelper(H, Ds, Ds, Rh),
+        %% and append it in this spot with the result of the rest
+        swapAll(Ds, [Var, Val|E], T, Rr), 
+        append([Rh], Rr, Lu)
+    ;   %% if head is not list 
+        (H = Var %% if head is definition 
+        ->  %% then append the definition value to the rest of the list
+            swapAll(Ds, [Var, Val|E], T, Rr), 
+            append([Val], Rr, Lu)
+        ;   %% if head isn't definition 
+            %% continue with Head
+            swapAll(Ds, [Var, Val|E], T, Rr), 
+            append([H], Rr, Lu)
+        )
+    ).
+
+subHelper(L, [], L).
+subHelper(L, Ds, [D|R], Lf) :- 
+    swapAll(Ds, D, L, Li), 
+    subHelper(Li, R, Lf).
+
+sub([], _, []).
+sub(L, Ds, R) :- subHelper(L, Ds, Ds, R). 
+
+
 %QUESTION 6 
