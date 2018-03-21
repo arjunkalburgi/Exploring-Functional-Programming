@@ -110,31 +110,28 @@
 %QUESTION 6 
     %  (i) query1(+Semester, +Name, -Total). Total should be bound to the total mark, in terms of percentage out of 100, of the student for that semester
         query1(S, N, T) :- 
-            c325(S, N, Q1, _, _, _, _, _), 
+            c325(S, N, Q1, Q2, Q3, Q4, Q5, Q6), 
+
             setup(S, as1, D1, M1), 
             weight(Q1, D1, M1, R1), 
             
-            c325(S, N, _, Q2, _, _, _, _), 
             setup(S, as2, D2, M2), 
             weight(Q2, D2, M2, R2), 
             
-            c325(S, N, _, _, Q3, _, _, _), 
             setup(S, as3, D3, M3), 
             weight(Q3, D3, M3, R3), 
             
-            c325(S, N, _, _, _, Q4, _, _), 
             setup(S, as4, D4, M4), 
             weight(Q4, D4, M4, R4), 
             
-            c325(S, N, _, _, _, _, Q5, _), 
             setup(S, midterm, D5, M5), 
             weight(Q5, D5, M5, R5), 
             
-            c325(S, N, _, _, _, _, _, Q6), 
             setup(S, final, D6, M6), 
             weight(Q6, D6, M6, R6), 
             !, 
-            list_sum([R1, R2, R3, R4, R5, R6], T).
+            list_sum([R1, R2, R3, R4, R5, R6], Tn), 
+            T is Tn * 100.
 
         weight(Q, D, M, R) :- 
             I is Q / D,
