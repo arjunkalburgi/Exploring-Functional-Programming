@@ -108,3 +108,83 @@
 
 
 %QUESTION 6 
+    %  (i) query1(+Semester, +Name, -Total). Total should be bound to the total mark, in terms of percentage out of 100, of the student for that semester
+        query1(S, N, T) :- 
+            c325(S, N, Q1, _, _, _, _, _), 
+            setup(S, as1, D1, M1), 
+            weight(Q1, D1, M1, R1), 
+            
+            c325(S, N, _, Q2, _, _, _, _), 
+            setup(S, as2, D2, M2), 
+            weight(Q2, D2, M2, R2), 
+            
+            c325(S, N, _, _, Q3, _, _, _), 
+            setup(S, as3, D3, M3), 
+            weight(Q3, D3, M3, R3), 
+            
+            c325(S, N, _, _, _, Q4, _, _), 
+            setup(S, as4, D4, M4), 
+            weight(Q4, D4, M4, R4), 
+            
+            c325(S, N, _, _, _, _, Q5, _), 
+            setup(S, midterm, D5, M5), 
+            weight(Q5, D5, M5, R5), 
+            
+            c325(S, N, _, _, _, _, _, Q6), 
+            setup(S, final, D6, M6), 
+            weight(Q6, D6, M6, R6), 
+            !, 
+            list_sum([R1, R2, R3, R4, R5, R6], T).
+
+        weight(Q, D, M, R) :- 
+            I is Q / D,
+            R is I * M.
+
+        % https://stackoverflow.com/a/9876309
+        list_sum([Item], Item).
+        list_sum([Item1, Item2|Tail], Total) :-
+            R is Item1 + Item2, 
+            list_sum([R|Tail], Total).
+
+
+
+    %  (ii) query2(+Semester, -L).
+        query2(S, L) :- 
+            findall(N, (c325(S, N, _, _, _, _, M, F),
+                        setup(S, midterm, MS, _),
+                        setup(S, final, FS, _),
+                        MP is M/MS, 
+                        FP is F/FS, 
+                        FP > MP),
+                    L).
+
+    %  (iii) query3(+Semester,+Name,+Type,+NewMark)
+        query3(S, N, T, NM) :- 
+            (T = as1
+            ->  retract(c325(S, N, A1, A2, A3, A4, M, F)),
+                assert(c325(S, N, NM, A2, A3, A4, M, F))
+            ;   true), 
+            (T = as2
+            ->  retract(c325(S, N, A1, A2, A3, A4, M, F)),
+                assert(c325(S, N, A1, NM, A3, A4, M, F))
+            ;   true), 
+            (T = as3
+            ->  retract(c325(S, N, A1, A2, A3, A4, M, F)),
+                assert(c325(S, N, A1, A2, NM, A4, M, F))
+            ;   true), 
+            (T = as4
+            ->  retract(c325(S, N, A1, A2, A3, A4, M, F)),
+                assert(c325(S, N, A1, A2, A3, NM, M, F))
+            ;   true), 
+            (T = midterm
+            ->  retract(c325(S, N, A1, A2, A3, A4, M, F)),
+                assert(c325(S, N, A1, A2, A3, A4, NM, F))
+            ;   true), 
+            (T = final
+            ->  retract(c325(S, N, A1, A2, A3, A4, M, F)),
+                assert(c325(S, N, A1, A2, A3, A4, M, NM))
+            ;   print("record not found")
+            ).
+
+            
+            
